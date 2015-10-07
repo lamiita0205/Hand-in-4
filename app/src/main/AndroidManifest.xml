@@ -47,6 +47,8 @@
                 android:resource="@xml/nearby_xml"/>
         </receiver>
 
+        <service android:name=".UpdateWidgetService">   </service>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA-pMzFUw4Vb505Qqx8qfWPH1R6H36dVjk" />
