@@ -1,5 +1,6 @@
 package com.example.lam.handin4;
 
+import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -67,8 +70,7 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
         String storagestate = Environment.getExternalStorageState();
         if(storagestate.equals(Environment.MEDIA_MOUNTED)){
 
-            File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            picturedir = new File(picturedir, "MyCameraApp");
+            File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
 
             if(picturedir.exists()){
                 File[] files = picturedir.listFiles();
@@ -91,9 +93,10 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
     private void addGeoTag(LatLng pos, String filename, GoogleMap gmap){
         gmap.setMyLocationEnabled(true);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+
+
         gmap.addMarker(new MarkerOptions()
-        .position(pos))
-                .setTitle(filename);
+                .position(pos)).setTitle(filename);
     }
 
     private LatLng getLatLongFromExif(String filename){
