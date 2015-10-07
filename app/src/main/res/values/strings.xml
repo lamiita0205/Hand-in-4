@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Handin4</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="Take_a_picture">Take picture</string>
+    <string name="Find_yourself">Find yourself</string>
+    <string name="selfie_and_map">Selfie and map</string>
+    <string name="exit">Exit</string>
+    <string name="back">Back</string>
+    <string name="danPlusID">Dan Iorga - 224277</string>
+    <string name="dan">Dan Iorga</string>
+    <string name="danID">- 224277 -</string>
+    <string name="lamPlusID">Lamiita Traista - 220394</string>
+    <string name="lam">Lamiita Traista</string>
+    <string name="LamID">- 220394 -</string>
+    <string name="title_activity_compass">OptionsActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_take_picture">TakePicture</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_find_yourself">FindYourself</string>
+    <string name="title_activity_map">Map</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="colorThemeBackground">#238E29</color>
+    <color name="doubleDare">#040404</color>
+    <color name="colorThemeText">#FFFFFF</color>
+    <color name="colorThemeBackground2">#cc0087</color>
+    <color name="colorThemeText2">#CDCDCD</color>
+</resources>
