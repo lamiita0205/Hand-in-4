@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         mapButton = (Button)findViewById(R.id.mapButton);
         mapButton.setOnClickListener(clickOnMap);
 
+        exitButton = (Button)findViewById(R.id.exitButton);
+        exitButton.setOnClickListener(clickOnExit);
+
     }
 
 
@@ -49,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
             Intent takePictureIntent = new Intent(MainActivity.this, TakePicture.class);
             startActivity(takePictureIntent);
 
+        }
+    };
+
+    View.OnClickListener clickOnExit = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            finish();
         }
     };
 
