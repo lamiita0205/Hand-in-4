@@ -25,7 +25,8 @@
         </activity>
         <activity
             android:name=".TakePicture"
-            android:label="@string/title_activity_take_picture" >
+            android:label="@string/title_activity_take_picture"
+            android:screenOrientation="portrait">
         </activity>
 
         <meta-data
