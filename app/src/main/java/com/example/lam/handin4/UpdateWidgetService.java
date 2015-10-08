@@ -3,16 +3,25 @@ package com.example.lam.handin4;
 /**
  * Created by Dan Iorga on 10/7/2015.
  */
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.google.android.gms.maps.GoogleMap;
 
 public class UpdateWidgetService extends Service {
 
@@ -58,6 +67,26 @@ public class UpdateWidgetService extends Service {
 
     private int getPicturesNearby()
     {
-        return (int)System.currentTimeMillis();
+        File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
+
+        if(picturedir==null)
+            return 0;
+        File[] pictures = picturedir.listFiles();
+        if(pictures == null)
+            return 0;
+        for(int i=0;i<pictures.length;i++) {
+            ExifInterface exif = null;
+            try {
+               exif = new ExifInterface(pictures[i].getAbsolutePath());
+            }catch(Exception e)
+            {
+                continue;
+            }
+            float[] lat = new float[2];
+            exif.getLatLong(lat);
+            double dist = lat[0];
+        }
+
+        return pictures.length;
     }
 }
