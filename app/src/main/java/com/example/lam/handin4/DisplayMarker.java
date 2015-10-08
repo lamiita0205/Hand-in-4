@@ -74,6 +74,7 @@ public class DisplayMarker extends AppCompatActivity {
         notes.setText(text);
     }
 
+    
     private void savePreferences(String key, boolean value) {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
