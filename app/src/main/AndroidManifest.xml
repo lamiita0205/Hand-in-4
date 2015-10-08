@@ -49,6 +49,7 @@
         </receiver>
 
         <service android:name=".UpdateWidgetService" >
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </service>
 
         <meta-data

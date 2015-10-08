@@ -31,30 +31,16 @@ import com.google.android.gms.maps.GoogleMap;
 
 public class UpdateWidgetService extends Service {
 
-    private double lat;
-    private double lng;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startID) {
-        lat = lng = 0;
-        LocationManager mlocManager =
-
-                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         LocationListener mlocListener = new MyLocationListener();
-
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            return START_NOT_STICKY;
+        try {
+            mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, mlocListener);
+        }catch(Exception e) {
         }
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this
                 .getApplicationContext());
         int[] allWidgetIds = intent
@@ -78,8 +64,21 @@ public class UpdateWidgetService extends Service {
         for (int widgetId : allWidgetIds) {
 
             // Set the text
+            int picturesNear = getPicturesNearby();
+            String message;
+            switch (picturesNear) {
+                case 0:
+                    message = "No pictures taken nearby. (500m)";
+                    break;
+                case 1:
+                    message = "One picture taken nearby. (500m)";
+                    break;
+                default:
+                    message = picturesNear + " pictures taken nearby. (500m)";
+                    break;
+            }
             remoteViews.setTextViewText(R.id.update,
-                    "Current: " + String.valueOf(getPicturesNearby()));
+                    message);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
         }
@@ -93,6 +92,7 @@ public class UpdateWidgetService extends Service {
 
     private int getPicturesNearby() {
         File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
+        int picturesNear = 0;
 
         if (picturedir == null)
             return 0;
@@ -108,10 +108,12 @@ public class UpdateWidgetService extends Service {
             }
             float[] lat = new float[2];
             exif.getLatLong(lat);
-            double dist = lat[0];
+            float[] dist = new float[1];
+            Location.distanceBetween(lat[0],lat[1], LocationSingleton.getInstance().getLatitude(), LocationSingleton.getInstance().getLongitude(), dist);
+            if(dist[0]<500)
+                picturesNear++;
         }
-
-        return (int)lat;
+        return picturesNear;
     }
 
 
@@ -120,8 +122,7 @@ public class UpdateWidgetService extends Service {
 
         @Override
         public void onLocationChanged(Location loc) {
-            lat = loc.getLatitude();
-            lng = loc.getLongitude();
+           LocationSingleton.getInstance().set(loc.getLatitude(), loc.getLongitude());
         }
 
         @Override
