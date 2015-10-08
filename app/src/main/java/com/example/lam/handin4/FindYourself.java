@@ -50,9 +50,14 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
         if (marker.equals(myMarker))
         {
+            String filename = marker.getTitle();
+
+            Bundle b = new Bundle();
+            b.putString("filename", filename);
+
             Intent displayMarkerIntent = new Intent(FindYourself.this, DisplayMarker.class);
-            /*Bitmap picture = myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap);
-            displayMarkerIntent.putExtra("Picture", picture);*/
+
+            displayMarkerIntent.putExtras(b);
             startActivity(displayMarkerIntent);
         }
         return true;
@@ -88,10 +93,9 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
         myFindImagesWithGeoTagAndAddToGmap(googleMap);
     }
 
-    private Bitmap myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap) {
+    private void myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap) {
 
         String storagestate = Environment.getExternalStorageState();
-        Bitmap picture = null;
         if(storagestate.equals(Environment.MEDIA_MOUNTED)){
 
             File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
@@ -104,17 +108,16 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
                         LatLng pos = getLatLongFromExif(file.getAbsolutePath());
 
                         if(pos!=null){
-                            picture = addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
+                            addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
                             gmap.setOnMarkerClickListener(this);
                         }
                     }
                 }
             }
         }
-        return picture;
     }
 
-    private Bitmap addGeoTag(LatLng pos, String filename, GoogleMap gmap, String path) {
+    private void addGeoTag(LatLng pos, String filename, GoogleMap gmap, String path) {
         gmap.setMyLocationEnabled(true);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
 
@@ -122,7 +125,6 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
         myMarker = gmap.addMarker(new MarkerOptions()
                 .position(pos).title(filename).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-        return bitmap;
     }
 
     public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth,
