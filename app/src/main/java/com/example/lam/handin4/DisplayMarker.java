@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -39,12 +40,20 @@ public class DisplayMarker extends AppCompatActivity {
     private Button saveButton;
     private final static String STORETEXT="storetext.txt";
     private String filename;
+    private ExifInterface exif;
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
+            exif = new ExifInterface(picturedir.getAbsolutePath() + filename);
+        }catch(Exception e) {
+        }
+
         setContentView(R.layout.activity_display_marker);
 
         notes = (EditText) findViewById(R.id.notes);
@@ -68,9 +77,10 @@ public class DisplayMarker extends AppCompatActivity {
     }
 
     private void loadSavedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager
+       /* SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        String text = sharedPreferences.getString("storedNotes", "");
+        String text = sharedPreferences.getString(filename, "");*/
+           String text = exif.getAttribute("UserComment");
         notes.setText(text);
     }
 
@@ -94,8 +104,14 @@ public class DisplayMarker extends AppCompatActivity {
     View.OnClickListener clickSave = new View.OnClickListener() {
         public void onClick(View v) {
             // TODO Auto-generated method stub
-            savePreferences("storedNotes", notes.getText().toString());
-
+            //savePreferences(filename, notes.getText().toString());
+            ///Toast.makeText(getApplicationContext(),picturedir.getAbsolutePath()+"/"+filename, Toast.LENGTH_LONG ).show();
+            exif.setAttribute("UserComment", notes.getText().toString());
+            try {
+                exif.saveAttributes();
+            }catch(Exception e) {
+                Toast.makeText(getApplicationContext(), "Error saving note", Toast.LENGTH_LONG).show();
+            }
             finish();
         }
     };
@@ -132,8 +148,6 @@ public class DisplayMarker extends AppCompatActivity {
         }
         return inSampleSize;
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

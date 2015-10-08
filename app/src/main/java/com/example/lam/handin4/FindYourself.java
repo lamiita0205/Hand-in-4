@@ -48,8 +48,6 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        if (marker.equals(myMarker))
-        {
             String filename = marker.getTitle();
 
             Bundle b = new Bundle();
@@ -59,7 +57,7 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
             displayMarkerIntent.putExtras(b);
             startActivity(displayMarkerIntent);
-        }
+
         return true;
     }
 
@@ -109,7 +107,6 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
                         if(pos!=null){
                             addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
-                            gmap.setOnMarkerClickListener(this);
                         }
                     }
                 }
