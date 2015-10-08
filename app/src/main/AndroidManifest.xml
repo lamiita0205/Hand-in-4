@@ -36,23 +36,28 @@
             android:name=".FindYourself"
             android:label="@string/title_activity_find_yourself" >
         </activity>
-        
-        <receiver android:name=".nearby_class">
-            <intent-filter >
+
+        <receiver android:name=".nearby_class" >
+            <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/nearby_xml"/>
+                android:resource="@xml/nearby_xml" />
         </receiver>
 
-        <service android:name=".UpdateWidgetService">   </service>
+        <service android:name=".UpdateWidgetService" >
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA-pMzFUw4Vb505Qqx8qfWPH1R6H36dVjk" />
 
+        <activity
+            android:name=".DisplayMarker"
+            android:label="@string/title_activity_display_marker" >
+        </activity>
     </application>
 
 </manifest>

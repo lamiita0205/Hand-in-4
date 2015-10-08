@@ -40,14 +40,6 @@ public class TakePicture extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_picture);
 
-        //Check if we have access to external storage, otherwise inform user and ...
-        if(myStorageMountedAndWriteableCheck()){
-            Toast.makeText(this, "We have access", Toast.LENGTH_LONG).show();
-        }else{
-            //Handle appropriately
-            Toast.makeText(this,"You did not pass!",Toast.LENGTH_LONG).show();
-        }
-
         //Get directory for saving images. Create if it does not exist
         //Create a folder inside: DIRECTORY_PICTURES
         mypicturedirectory = myGetPictureDirectory();
@@ -95,16 +87,13 @@ public class TakePicture extends AppCompatActivity {
         ExifInterface exif = new ExifInterface(filename);
         int or = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
 
-        TextView t1 = (TextView) findViewById(R.id.tv1);
         TextView t2 = (TextView) findViewById(R.id.tv2);
         TextView t3 = (TextView) findViewById(R.id.tv3);
-
-        t1.setText("Orientation: " + or);
 
         float[] latlong = new float[2];
         if(exif.getLatLong(latlong)){
             t2.setText("Latitude: "+latlong[0]);
-            t3.setText("Latitude: "+latlong[1]);
+            t3.setText("Longitude: "+latlong[1]);
         }
     }
 

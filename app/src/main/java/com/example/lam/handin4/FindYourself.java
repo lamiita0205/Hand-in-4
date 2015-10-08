@@ -1,5 +1,6 @@
 package com.example.lam.handin4;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +31,8 @@ import java.io.IOException;
 
 public class FindYourself extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
+    private Marker myMarker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +43,19 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
         mapFragment.getMapAsync(this);
 
+    }
 
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        if (marker.equals(myMarker))
+        {
+            Intent displayMarkerIntent = new Intent(FindYourself.this, DisplayMarker.class);
+            /*Bitmap picture = myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap);
+            displayMarkerIntent.putExtra("Picture", picture);*/
+            startActivity(displayMarkerIntent);
+        }
+        return true;
     }
 
 
@@ -73,9 +88,10 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
         myFindImagesWithGeoTagAndAddToGmap(googleMap);
     }
 
-    private void myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap) {
+    private Bitmap myFindImagesWithGeoTagAndAddToGmap(GoogleMap gmap) {
 
         String storagestate = Environment.getExternalStorageState();
+        Bitmap picture = null;
         if(storagestate.equals(Environment.MEDIA_MOUNTED)){
 
             File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
@@ -88,24 +104,25 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
                         LatLng pos = getLatLongFromExif(file.getAbsolutePath());
 
                         if(pos!=null){
-                            addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
+                            picture = addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
+                            gmap.setOnMarkerClickListener(this);
                         }
                     }
                 }
             }
         }
-
-
+        return picture;
     }
 
-    private void addGeoTag(LatLng pos, String filename, GoogleMap gmap, String path){
+    private Bitmap addGeoTag(LatLng pos, String filename, GoogleMap gmap, String path) {
         gmap.setMyLocationEnabled(true);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
 
         Bitmap bitmap = decodeSampledBitmapFromPath(path, 100, 100);
 
-        gmap.addMarker(new MarkerOptions()
+        myMarker = gmap.addMarker(new MarkerOptions()
                 .position(pos).title(filename).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+        return bitmap;
     }
 
     public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth,
@@ -158,12 +175,12 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
         return pos;
     }
 
-    @Override
+    /*@Override
     public boolean onMarkerClick(Marker marker) {
 
         Toast.makeText(this, "ImageName: " +marker.getTitle(),Toast.LENGTH_LONG).show();
         return true;
 
 
-    }
+    }*/
 }

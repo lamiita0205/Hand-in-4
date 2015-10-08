@@ -20,4 +20,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_find_yourself">FindYourself</string>
     <string name="title_activity_map">Map</string>
+    <string name="title_activity_display_marker">DisplayMarker</string>
 </resources>
