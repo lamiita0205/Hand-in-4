@@ -1,19 +1,15 @@
 package com.example.lam.handin4;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,17 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 public class DisplayMarker extends AppCompatActivity {
 
@@ -47,13 +33,6 @@ public class DisplayMarker extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        try {
-            File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
-            exif = new ExifInterface(picturedir.getAbsolutePath() + filename);
-        }catch(Exception e) {
-        }
-
         setContentView(R.layout.activity_display_marker);
 
         notes = (EditText) findViewById(R.id.notes);
@@ -61,15 +40,22 @@ public class DisplayMarker extends AppCompatActivity {
         saveButton = (Button)findViewById(R.id.save);
         saveButton.setOnClickListener(clickSave);
 
-        loadSavedPreferences();
 
         picture = (ImageView) findViewById(R.id.pictureFromMap);
 
         Bundle b = getIntent().getExtras();
         filename = b.getString("filename");
 
-        File picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp");
+        File picturedir = null;
+        try {
+             picturedir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/MyCameraApp/");
+             exif = new ExifInterface(picturedir.getAbsolutePath()+"/"+filename);
+        }catch(Exception e) {
+            Toast.makeText(getApplicationContext(), "Error creating EXIF interface", Toast.LENGTH_LONG).show();
+        }
 
+        Toast.makeText(getApplicationContext(), picturedir.getAbsolutePath()+"/"+filename, Toast.LENGTH_LONG).show();
+        loadSavedPreferences();
         File image = new File(picturedir, filename);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap bitmap = decodeSampledBitmapFromPath(image.getAbsolutePath(), 400, 300);
@@ -80,7 +66,11 @@ public class DisplayMarker extends AppCompatActivity {
        /* SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         String text = sharedPreferences.getString(filename, "");*/
-           String text = exif.getAttribute("UserComment");
+        String text;
+        if(exif == null)
+            text = "null exif";
+        else
+            text = exif.getAttribute("UserComment");
         notes.setText(text);
     }
 
@@ -109,6 +99,8 @@ public class DisplayMarker extends AppCompatActivity {
             exif.setAttribute("UserComment", notes.getText().toString());
             try {
                 exif.saveAttributes();
+                Toast.makeText(getApplicationContext(), exif.getAttribute("UserComment"), Toast.LENGTH_LONG).show();
+
             }catch(Exception e) {
                 Toast.makeText(getApplicationContext(), "Error saving note", Toast.LENGTH_LONG).show();
             }
