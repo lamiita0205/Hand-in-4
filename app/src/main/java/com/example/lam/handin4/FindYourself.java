@@ -1,6 +1,11 @@
 package com.example.lam.handin4;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LevelListDrawable;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +25,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FindYourself extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -33,6 +39,8 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.gmap);
 
         mapFragment.getMapAsync(this);
+
+
     }
 
 
@@ -80,7 +88,7 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
                         LatLng pos = getLatLongFromExif(file.getAbsolutePath());
 
                         if(pos!=null){
-                            addGeoTag(pos, file.getName(), gmap);
+                            addGeoTag(pos, file.getName(), gmap, file.getAbsolutePath());
                         }
                     }
                 }
@@ -90,13 +98,47 @@ public class FindYourself extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void addGeoTag(LatLng pos, String filename, GoogleMap gmap){
+    private void addGeoTag(LatLng pos, String filename, GoogleMap gmap, String path){
         gmap.setMyLocationEnabled(true);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
 
+        Bitmap bitmap = decodeSampledBitmapFromPath(path, 100, 100);
 
         gmap.addMarker(new MarkerOptions()
-                .position(pos)).setTitle(filename);
+                .position(pos).title(filename).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+    }
+
+    public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth,
+                                                     int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bmp = BitmapFactory.decodeFile(path, options);
+        return bmp;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float) height / (float) reqHeight);
+            } else {
+                inSampleSize = Math.round((float) width / (float) reqWidth);
+            }
+        }
+        return inSampleSize;
     }
 
     private LatLng getLatLongFromExif(String filename){
